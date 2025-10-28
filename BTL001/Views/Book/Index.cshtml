@@ -1,0 +1,33 @@
+﻿@model IEnumerable<YourNamespace.Models.Book>
+@{
+    ViewBag.Title = "Danh sách sách";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="mb-3">Danh sách sách</h3>
+
+<div id="bookList" class="row">
+    @foreach (var book in Model)
+    {
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <img src="@book.ImageUrl" class="card-img-top" alt="@book.Title" />
+                <div class="card-body text-center">
+                    <h5>@book.Title</h5>
+                    <p>@book.Price.ToString("N0") đ</p>
+                    <a href="@Url.Action("Details", "Book", new { id = book.BookId })" class="btn btn-sm btn-primary">Xem</a>
+                    <button class="btn btn-sm btn-outline-success add-to-cart" data-id="@book.BookId">+</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    $(".add-to-cart").click(function () {
+        var id = $(this).data("id");
+        $.post('@Url.Action("AddToCart", "Cart")', { id: id }, function (res) {
+            $("#cart-count").text(res.count);
+        });
+    });
+</script>

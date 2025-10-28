@@ -1,0 +1,21 @@
+﻿@model IEnumerable<YourNamespace.Models.CartItem>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="list-group">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>@item.Book.Title</span>
+                <span>@item.Quantity × @item.UnitPrice.ToString("N0") đ</span>
+            </li>
+        }
+    </ul>
+    <div class="text-end mt-2">
+        <a href="@Url.Action("Index", "Cart")" class="btn btn-sm btn-primary">Xem giỏ hàng</a>
+    </div>
+}
+else
+{
+    <p class="text-center text-muted">Giỏ hàng trống.</p>
+}

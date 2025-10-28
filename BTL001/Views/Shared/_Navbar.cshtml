@@ -1,0 +1,39 @@
+﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="@Url.Action("Index", "Home")">📚 BookStore</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Book")">Sách</a></li>
+            </ul>
+            <form id="searchForm" class="d-flex">
+                <input id="searchBox" class="form-control me-2" type="search" placeholder="Tìm kiếm sách..." />
+            </form>
+            <ul class="navbar-nav ms-3">
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="@Url.Action("Index", "Cart")">
+                        🛒 <span id="cart-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // AJAX search
+    $("#searchBox").on("keyup", function () {
+        let keyword = $(this).val();
+        if (keyword.length < 2) return;
+        $.ajax({
+            url: '@Url.Action("Search", "Book")',
+            data: { q: keyword },
+            success: function (data) {
+                $("#searchResults").html(data);
+            }
+        });
+    });
+</script>

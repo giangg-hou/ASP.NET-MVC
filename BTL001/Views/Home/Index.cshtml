@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4 text-center">Sách mới nhất</h2>
+
+<div class="row">
+    @foreach (var book in ViewBag.LatestBooks)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="@book.ImageUrl" class="card-img-top" alt="@book.Title" />
+                <div class="card-body text-center">
+                    <h5 class="card-title">@book.Title</h5>
+                    <p>@book.Price.ToString("N0") đ</p>
+                    <button class="btn btn-outline-primary add-to-cart" data-id="@book.BookId">Thêm vào giỏ</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    $(".add-to-cart").click(function () {
+        var id = $(this).data("id");
+        $.post('@Url.Action("AddToCart", "Cart")', { id: id }, function (res) {
+            $("#cart-count").text(res.count);
+        });
+    });
+</script>

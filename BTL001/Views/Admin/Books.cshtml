@@ -1,0 +1,33 @@
+﻿@model IEnumerable<YourNamespace.Models.Book>
+@{
+    ViewBag.Title = "Quản lý sách";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Quản lý sách</h3>
+
+<table class="table table-striped">
+    <thead><tr><th>ID</th><th>Tên sách</th><th>Giá</th><th></th></tr></thead>
+    <tbody id="bookList">
+        @foreach (var book in Model)
+        {
+            <tr data-id="@book.BookId">
+                <td>@book.BookId</td>
+                <td>@book.Title</td>
+                <td>@book.Price.ToString("N0") đ</td>
+                <td><button class="btn btn-sm btn-danger delete">Xóa</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(".delete").click(function () {
+        let id = $(this).closest("tr").data("id");
+        if (confirm("Xóa sách này?")) {
+            $.post('@Url.Action("Delete", "Admin")', { id: id }, function () {
+                $("tr[data-id='" + id + "']").remove();
+            });
+        }
+    });
+</script>

@@ -1,0 +1,28 @@
+﻿@model YourNamespace.Models.Book
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <img src="@Model.ImageUrl" class="img-fluid" />
+    </div>
+    <div class="col-md-8">
+        <h3>@Model.Title</h3>
+        <p>Tác giả: <strong>@Model.Author.FullName</strong></p>
+        <p>Thể loại: <strong>@Model.Category.Name</strong></p>
+        <p>@Model.Description</p>
+        <h4>@Model.Price.ToString("N0") đ</h4>
+        <button class="btn btn-primary add-to-cart" data-id="@Model.BookId">Thêm vào giỏ hàng</button>
+    </div>
+</div>
+
+<script>
+    $(".add-to-cart").click(function () {
+        var id = $(this).data("id");
+        $.post('@Url.Action("AddToCart", "Cart")', { id: id }, function (res) {
+            $("#cart-count").text(res.count);
+        });
+    });
+</script>
