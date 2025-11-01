@@ -1,0 +1,89 @@
+﻿@model IEnumerable<BTL002.Models.DonHang>
+@using System.Globalization
+@using System.Linq
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
+
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    // Use ViewContext.HttpContext.Request instead of Request
+    var selectedFilter = ViewContext.HttpContext.Request.Query["trangThai"].ToString();
+    var culture = CultureInfo.GetCultureInfo("vi-VN");
+
+    Func<BTL002.Models.TrangThaiDonHang, string> GetEnumDisplayName = value =>
+    {
+        var member = typeof(BTL002.Models.TrangThaiDonHang).GetMember(value.ToString()).FirstOrDefault();
+        var disp = member?.GetCustomAttribute<DisplayAttribute>();
+        return disp?.GetName() ?? value.ToString();
+    };
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="get" asp-action="QuanLy" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="trangThai" class="form-select">
+            <option value="">Tất cả trạng thái</option>
+            @foreach (var t in Enum.GetValues(typeof(BTL002.Models.TrangThaiDonHang)))
+            {
+                var tv = (BTL002.Models.TrangThaiDonHang)t;
+                <option value="@tv" selected="@(selectedFilter == tv.ToString() ? "selected" : null)">
+                    @GetEnumDisplayName(tv)
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Lọc</button>
+    </div>
+</form>
+
+@if (Model == null || !Model.Any())
+{
+    <p>Không có đơn hàng.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Người đặt</th>
+                <th>Ngày đặt</th>
+                <th>Trạng thái</th>
+                <th>Tổng tiền</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in Model)
+            {
+                <tr>
+                    <td>@d.MaDonHang</td>
+                    <td>@(d.NguoiDung?.HoTen ?? "—")</td>
+                    <td>@d.NgayDatHang.ToString()</td>
+                    <td>@GetEnumDisplayName(d.TrangThai)</td>
+                    <td>@d.TongTien.ToString("C0", culture)</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@d.MaDonHang" class="btn btn-sm btn-info">Chi tiết</a>
+
+                        <form asp-action="CapNhatTrangThai" method="post" class="d-inline ms-1">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="maDonHang" value="@d.MaDonHang" />
+                            <select name="trangThai" class="form-select d-inline w-auto">
+                                @foreach (var t in Enum.GetValues(typeof(BTL002.Models.TrangThaiDonHang)))
+                                {
+                                    var tv = (BTL002.Models.TrangThaiDonHang)t;
+                                    <option value="@tv" selected="@(tv == d.TrangThai ? "selected" : null)">
+                                        @GetEnumDisplayName(tv)
+                                    </option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary ms-1">Cập nhật</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

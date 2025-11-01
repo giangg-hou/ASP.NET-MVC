@@ -1,0 +1,61 @@
+﻿@model BTL002.Models.Sach
+
+@if (Model != null && Model.MaSach > 0)
+{
+    <input asp-for="MaSach" type="hidden" />
+}
+
+<div class="mb-3">
+    <label asp-for="TenSach" class="form-label"></label>
+    <input asp-for="TenSach" class="form-control" />
+    <span asp-validation-for="TenSach" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="MaTacGia" class="form-label"></label>
+    <select asp-for="MaTacGia" asp-items="(SelectList)ViewBag.MaTacGia" class="form-select"></select>
+    <span asp-validation-for="MaTacGia" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="MaNhaXuatBan" class="form-label"></label>
+    <select asp-for="MaNhaXuatBan" asp-items="(SelectList)ViewBag.MaNhaXuatBan" class="form-select"></select>
+    <span asp-validation-for="MaNhaXuatBan" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="MaDanhMuc" class="form-label"></label>
+    <select asp-for="MaDanhMuc" asp-items="(SelectList)ViewBag.MaDanhMuc" class="form-select"></select>
+    <span asp-validation-for="MaDanhMuc" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="GiaBan" class="form-label"></label>
+    <input asp-for="GiaBan" class="form-control" />
+    <span asp-validation-for="GiaBan" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="SoLuongTon" class="form-label"></label>
+    <input asp-for="SoLuongTon" class="form-control" />
+    <span asp-validation-for="SoLuongTon" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="HinhAnh" class="form-label"></label>
+    <input asp-for="HinhAnh" class="form-control" />
+    <span asp-validation-for="HinhAnh" class="text-danger"></span>
+    <div class="form-text">Đường dẫn tới ảnh (ví dụ: /images/cover.jpg) hoặc URL đầy đủ.</div>
+</div>
+
+<div class="mb-3">
+    <label asp-for="NamXuatBan" class="form-label"></label>
+    <input asp-for="NamXuatBan" class="form-control" />
+    <span asp-validation-for="NamXuatBan" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="MoTa" class="form-label"></label>
+    <textarea asp-for="MoTa" class="form-control" rows="4"></textarea>
+    <span asp-validation-for="MoTa" class="text-danger"></span>
+</div>

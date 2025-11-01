@@ -1,0 +1,114 @@
+﻿@model IEnumerable<BTL002.Models.Sach>
+
+@{
+    ViewData["Title"] = "Danh sách sách";
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1><i class="fas fa-book"></i> Danh sách sách</h1>
+    </div>
+    <div class="col-md-6 text-end">
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success">
+                <i class="fas fa-plus"></i> Thêm sách mới
+            </a>
+        }
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm sách..." value="@ViewBag.CurrentFilter">
+                </div>
+                <div class="col-md-3">
+                    <select name="danhMuc" class="form-select">
+                        <option value="">-- Tất cả danh mục --</option>
+                        @foreach (var dm in ViewBag.DanhMucs as SelectList)
+                        {
+                            <option value="@dm.Value">@dm.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="tacGia" class="form-select">
+                        <option value="">-- Tất cả tác giả --</option>
+                        @foreach (var tg in ViewBag.TacGias as SelectList)
+                        {
+                            <option value="@tg.Value">@tg.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Tìm
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Book Grid -->
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/no-image.jpg" : item.HinhAnh)"
+                     class="card-img-top" alt="@item.TenSach" style="height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <span class="badge bg-info mb-2">@item.DanhMuc?.TenDanhMuc</span>
+                    <h5 class="card-title">@item.TenSach</h5>
+                    <p class="card-text text-muted small">
+                        <i class="fas fa-user"></i> @item.TacGia?.TenTacGia
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-building"></i> @item.NhaXuatBan?.TenNhaXuatBan
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <span class="text-danger fw-bold fs-5">@item.GiaBan.ToString("N0") đ</span>
+                        <span class="badge bg-secondary">Còn @item.SoLuongTon</span>
+                    </div>
+                    <div class="mt-3">
+                        <a asp-action="Details" asp-route-id="@item.MaSach" class="btn btn-primary btn-sm w-100 mb-2">
+                            <i class="fas fa-info-circle"></i> Chi tiết
+                        </a>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <form asp-controller="GioHang" asp-action="ThemVaoGio" method="post" class="d-inline w-100">
+                                <input type="hidden" name="maSach" value="@item.MaSach" />
+                                <button type="submit" class="btn btn-success btn-sm w-100" @(item.SoLuongTon == 0 ? "disabled" : "")>
+                                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                            </form>
+                        }
+                    </div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="mt-2">
+                            <a asp-action="Edit" asp-route-id="@item.MaSach" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Sửa
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.MaSach" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Xóa
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle"></i> Không tìm thấy sách nào.
+    </div>
+}

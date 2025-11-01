@@ -1,0 +1,91 @@
+﻿@model IEnumerable<BTL002.Models.DonHang>
+
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<h1><i class="fas fa-list-alt"></i> Đơn hàng của tôi</h1>
+<hr />
+
+@if (Model.Any())
+{
+    foreach (var donHang in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Đơn hàng #@donHang.MaDonHang</strong>
+                    <span class="ms-3 text-muted">@donHang.NgayDatHang.ToString()</span>
+                </div>
+                <div>
+                    @switch (donHang.TrangThai)
+                    {
+                        case BTL002.Models.TrangThaiDonHang.ChoXacNhan:
+                            <span class="badge bg-warning">Chờ xác nhận</span>
+                            break;
+                        case BTL002.Models.TrangThaiDonHang.DangGiao:
+                            <span class="badge bg-info">Đang giao</span>
+                            break;
+                        case BTL002.Models.TrangThaiDonHang.DaGiao:
+                            <span class="badge bg-success">Đã giao</span>
+                            break;
+                        case BTL002.Models.TrangThaiDonHang.DaHuy:
+                            <span class="badge bg-danger">Đã hủy</span>
+                            break;
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        @foreach (var chiTiet in donHang.ChiTietDonHangs)
+                        {
+                            <div class="d-flex mb-2">
+                                <img src="@(string.IsNullOrEmpty(chiTiet.Sach.HinhAnh) ? "/images/no-image.jpg" : chiTiet.Sach.HinhAnh)"
+                                     alt="@chiTiet.Sach.TenSach" style="width: 50px; height: 70px; object-fit: cover;" class="me-3">
+                                <div>
+                                    <h6 class="mb-0">@chiTiet.Sach.TenSach</h6>
+                                    <small class="text-muted">Số lượng: @chiTiet.SoLuong x @chiTiet.GiaBan.ToString("N0") đ</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <p class="mb-2">
+                            <strong>Tổng tiền:</strong>
+                            <span class="text-danger fs-5">@donHang.TongTien.ToString("N0") đ</span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>Thanh toán:</strong>
+                            @(donHang.PhuongThucThanhToan == BTL002.Models.PhuongThucThanhToan.COD ? "COD" : "Chuyển khoản")
+                        </p>
+                        <div class="mt-3">
+                            <a asp-action="Details" asp-route-id="@donHang.MaDonHang" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye"></i> Xem chi tiết
+                            </a>
+                            @if (donHang.TrangThai == BTL002.Models.TrangThaiDonHang.ChoXacNhan)
+                            {
+                                <form asp-action="HuyDonHang" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng?');">
+                                    <input type="hidden" name="maDonHang" value="@donHang.MaDonHang" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-times"></i> Hủy đơn
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center py-5">
+        <i class="fas fa-clipboard-list fa-5x text-muted mb-3"></i>
+        <h3>Bạn chưa có đơn hàng nào</h3>
+        <a asp-controller="Sach" asp-action="Index" class="btn btn-primary mt-3">
+            <i class="fas fa-shopping-bag"></i> Mua sắm ngay
+        </a>
+    </div>
+}

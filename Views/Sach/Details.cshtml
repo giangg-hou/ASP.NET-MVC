@@ -1,0 +1,168 @@
+﻿@model BTL002.Models.Sach
+
+@{
+    ViewData["Title"] = Model.TenSach;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Sach" asp-action="Index">Sách</a></li>
+        <li class="breadcrumb-item active">@Model.TenSach</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Product Image -->
+    <div class="col-md-4">
+        <img src="@(string.IsNullOrEmpty(Model.HinhAnh) ? "/images/no-image.jpg" : Model.HinhAnh)"
+             class="img-fluid rounded shadow" alt="@Model.TenSach">
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-controller="YeuThich" asp-action="Them" method="post" class="mt-3">
+                <input type="hidden" name="maSach" value="@Model.MaSach" />
+                <button type="submit" class="btn btn-outline-danger w-100">
+                    <i class="fas fa-heart"></i> Thêm vào yêu thích
+                </button>
+            </form>
+        }
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-md-8">
+        <h1>@Model.TenSach</h1>
+        <div class="mb-3">
+            <span class="badge bg-info">@Model.DanhMuc?.TenDanhMuc</span>
+            @{
+                var avgRating = Model.DanhGias?.Any() == true ? Model.DanhGias.Average(d => d.DiemDanhGia) : 0;
+                var reviewCount = Model.DanhGias?.Count() ?? 0;
+            }
+            <span class="ms-2">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <i class="fas fa-star @(i <= avgRating ? "text-warning" : "text-muted")"></i>
+                }
+                <small class="text-muted">(@reviewCount đánh giá)</small>
+            </span>
+        </div>
+
+        <table class="table table-borderless">
+            <tr>
+                <th width="150">Tác giả:</th>
+                <td>@Model.TacGia?.TenTacGia</td>
+            </tr>
+            <tr>
+                <th>Nhà xuất bản:</th>
+                <td>@Model.NhaXuatBan?.TenNhaXuatBan</td>
+            </tr>
+            <tr>
+                <th>Năm xuất bản:</th>
+                <td>@Model.NamXuatBan</td>
+            </tr>
+            <tr>
+                <th>Giá bán:</th>
+                <td><span class="fs-3 text-danger fw-bold">@Model.GiaBan.ToString("N0") đ</span></td>
+            </tr>
+            <tr>
+                <th>Tình trạng:</th>
+                <td>
+                    @if (Model.SoLuongTon > 0)
+                    {
+                        <span class="badge bg-success">Còn hàng (@Model.SoLuongTon)</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Hết hàng</span>
+                    }
+                </td>
+            </tr>
+        </table>
+
+        @if (User.Identity?.IsAuthenticated == true && Model.SoLuongTon > 0)
+        {
+            <form asp-controller="GioHang" asp-action="ThemVaoGio" method="post" class="mb-4">
+                <input type="hidden" name="maSach" value="@Model.MaSach" />
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="number" name="soLuong" value="1" min="1" max="@Model.SoLuongTon" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+
+        <div class="mt-4">
+            <h4>Mô tả sản phẩm</h4>
+            <p>@Html.Raw(Model.MoTa)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h3>Đánh giá sản phẩm</h3>
+        <hr />
+
+        @if (Model.DanhGias?.Any() == true)
+        {
+            foreach (var danhGia in Model.DanhGias.OrderByDescending(d => d.NgayDanhGia))
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>@danhGia.NguoiDung?.HoTen</strong>
+                                <div>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fas fa-star @(i <= danhGia.DiemDanhGia ? "text-warning" : "text-muted")"></i>
+                                    }
+                                </div>
+                            </div>
+                            <small class="text-muted">@danhGia.NgayDanhGia.ToString()</small>
+                        </div>
+                        <p class="mt-2">@danhGia.NoiDung</p>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Chưa có đánh giá nào.</p>
+        }
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5>Viết đánh giá của bạn</h5>
+                    <form asp-controller="DanhGia" asp-action="Create" method="post">
+                        <input type="hidden" name="maSach" value="@Model.MaSach" />
+                        <div class="mb-3">
+                            <label>Đánh giá:</label>
+                            <div class="rating">
+                                @for (int i = 5; i >= 1; i--)
+                                {
+                                    <input type="radio" name="diemDanhGia" value="@i" id="star@(i)" required />
+                                    <label for="star@(i)"><i class="fas fa-star"></i></label>
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <textarea name="noiDung" class="form-control" rows="3" placeholder="Nhận xét của bạn..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Gửi đánh giá
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,22 @@
+﻿@model BTL002.Models.Sach
+
+@{
+    ViewData["Title"] = "Sửa sách";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    @await Html.PartialAsync("_Form", Model)
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

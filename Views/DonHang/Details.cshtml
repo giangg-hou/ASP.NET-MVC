@@ -1,0 +1,70 @@
+﻿@model BTL002.Models.DonHang
+
+@{
+    ViewData["Title"] = $"Đơn hàng #{Model.MaDonHang}";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Mã đơn</dt>
+    <dd class="col-sm-9">@Model.MaDonHang</dd>
+
+    <dt class="col-sm-3">Ngày đặt</dt>
+    <dd class="col-sm-9">@Model.NgayDatHang.ToString()</dd>
+
+    <dt class="col-sm-3">Trạng thái</dt>
+    <dd class="col-sm-9">@Model.TrangThai</dd>
+
+    <dt class="col-sm-3">Phương thức</dt>
+    <dd class="col-sm-9">@Model.PhuongThucThanhToan</dd>
+
+    <dt class="col-sm-3">Tổng tiền</dt>
+    <dd class="col-sm-9">@Model.TongTien.ToString("C")</dd>
+</dl>
+
+<h4>Chi tiết đơn</h4>
+
+@if (Model.ChiTietDonHangs != null && Model.ChiTietDonHangs.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Sách</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model.ChiTietDonHangs)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="Sach" asp-action="Details" asp-route-id="@c.MaSach">@c.Sach?.TenSach</a>
+                    </td>
+                    <td>@c.GiaBan.ToString("C")</td>
+                    <td>@c.SoLuong</td>
+                    <td>@c.ThanhTien.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Không tìm thấy chi tiết đơn hàng.</p>
+}
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+
+    @if (Model.TrangThai == BTL002.Models.TrangThaiDonHang.ChoXacNhan)
+    {
+        <form asp-action="HuyDonHang" method="post" class="d-inline ms-2">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="maDonHang" value="@Model.MaDonHang" />
+            <button type="submit" class="btn btn-danger">Hủy đơn</button>
+        </form>
+    }
+</p>
