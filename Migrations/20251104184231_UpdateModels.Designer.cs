@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BTL002.Migrations
 {
     [DbContext(typeof(BookStoreDbContext))]
-    [Migration("20251101181633_InitialFix")]
-    partial class InitialFix
+    [Migration("20251104184231_UpdateModels")]
+    partial class UpdateModels
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -304,12 +304,12 @@ namespace BTL002.Migrations
                     b.HasData(
                         new
                         {
-                            MaNguoiDung = 1,
+                            MaNguoiDung = 2,
                             DiaChi = "Việt Nam",
                             Email = "admin@bookstore.com",
                             HoTen = "Quản trị viên",
-                            MatKhau = "6G94qKPK8LYNjnTllCqm2G3BUM08AzOK7yW30tfjrMc=",
-                            NgayDangKy = "2025-11-01",
+                            MatKhau = "lsrjXOipsCRBeL8o5JZsLOG4OFcjqWprg4hYzdbKCh4=",
+                            NgayDangKy = "2025-11-05",
                             SoDienThoai = "0000000000",
                             VaiTro = "Admin"
                         });
@@ -356,12 +356,18 @@ namespace BTL002.Migrations
                         new
                         {
                             MaNhaXuatBan = 3,
+                            DiaChi = "96 Định Công, Hoàng Mai, Hà Nội",
+                            TenNhaXuatBan = "NXB DH Mở Hà Nội"
+                        },
+                        new
+                        {
+                            MaNhaXuatBan = 4,
                             DiaChi = "175 Giảng Võ, Đống Đa, Hà Nội",
                             TenNhaXuatBan = "NXB Lao Động"
                         },
                         new
                         {
-                            MaNhaXuatBan = 4,
+                            MaNhaXuatBan = 5,
                             DiaChi = "46 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội",
                             TenNhaXuatBan = "NXB Thế Giới"
                         });
@@ -463,31 +469,31 @@ namespace BTL002.Migrations
                         new
                         {
                             MaTacGia = 1,
-                            TenTacGia = "Nguyễn Nhật Ánh",
+                            TenTacGia = "giang 01",
                             TieuSu = "Nhà văn nổi tiếng Việt Nam"
                         },
                         new
                         {
                             MaTacGia = 2,
-                            TenTacGia = "Dale Carnegie",
+                            TenTacGia = "giang 02",
                             TieuSu = "Tác giả người Mỹ về phát triển bản thân"
                         },
                         new
                         {
                             MaTacGia = 3,
-                            TenTacGia = "Robert Kiyosaki",
+                            TenTacGia = "giang 03",
                             TieuSu = "Doanh nhân và tác giả người Mỹ"
                         },
                         new
                         {
                             MaTacGia = 4,
-                            TenTacGia = "Paulo Coelho",
+                            TenTacGia = "giang 04",
                             TieuSu = "Nhà văn người Brazil"
                         },
                         new
                         {
                             MaTacGia = 5,
-                            TenTacGia = "Haruki Murakami",
+                            TenTacGia = "giang 05",
                             TieuSu = "Nhà văn Nhật Bản đương đại"
                         });
                 });

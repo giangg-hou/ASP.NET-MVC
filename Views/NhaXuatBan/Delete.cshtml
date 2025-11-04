@@ -1,0 +1,97 @@
+﻿@model BTL002.Models.NhaXuatBan
+@{
+    ViewData["Title"] = "Xóa nhà xuất bản";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Xác nhận xóa nhà xuất bản</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <strong>Cảnh báo!</strong> Bạn có chắc chắn muốn xóa nhà xuất bản này?
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Mã NXB:</dt>
+                        <dd class="col-sm-8"><strong>#@Model.MaNhaXuatBan</strong></dd>
+
+                        <dt class="col-sm-4">Tên NXB:</dt>
+                        <dd class="col-sm-8"><strong class="text-danger">@Model.TenNhaXuatBan</strong></dd>
+
+                        <dt class="col-sm-4">Địa chỉ:</dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.DiaChi))
+                            {
+                                <i class="fas fa-map-marker-alt"></i> 
+                                @Model.DiaChi
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không có</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Địa chỉ: </dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.DiaChi))
+                            {
+                                <i class="fas fa-envelope"></i> 
+                                @Model.DiaChi
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không có</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Số sách: </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Sachs != null && Model.Sachs.Any())
+                            {
+                                <span class="badge bg-danger">@Model.Sachs.Count sách</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">0 sách</span>
+                            }
+                        </dd>
+                    </dl>
+
+                    @if (Model.Sachs != null && Model.Sachs.Any())
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-times-circle"></i>
+                            <strong>Không thể xóa!</strong> Nhà xuất bản này đang có sách.
+                        </div>
+                    }
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="MaNhaXuatBan" />
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Hủy bỏ
+                            </a>
+                            @if (Model.Sachs == null || !Model.Sachs.Any())
+                            {
+                                <button type="submit" class="btn btn-danger"
+                                        onclick="return confirm('Bạn có CHẮC CHẮN muốn xóa?');">
+                                    <i class="fas fa-trash-alt"></i> Xóa nhà xuất bản
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-danger" disabled>
+                                    <i class="fas fa-ban"></i> Không thể xóa
+                                </button>
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

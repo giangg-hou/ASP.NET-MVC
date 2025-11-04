@@ -1,70 +1,220 @@
 ﻿@model BTL002.Models.DonHang
+@using BTL002.Models
 
 @{
-    ViewData["Title"] = $"Đơn hàng #{Model.MaDonHang}";
+    ViewData["Title"] = "Chi tiết đơn hàng";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Header -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-receipt"></i> Chi tiết đơn hàng #@Model.MaDonHang</h4>
+                        <span class="badge
+                            @(Model.TrangThai == TrangThaiDonHang.DaGiao ? "bg-success" :
+                                                            Model.TrangThai == TrangThaiDonHang.ChoXacNhan ? "bg-info" :
+                                                                                          Model.TrangThai == TrangThaiDonHang.DangGiao ? "bg-warning" :
+                                                            "bg-danger") fs-5">
+                            @Model.TrangThai
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Thông tin khách hàng -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary"><i class="fas fa-user"></i> Thông tin khách hàng</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th width="40%">Họ tên:</th>
+                                    <td><strong>@Model.MaNguoiDung</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>Ngày đặt hàng: </th>
+                                    <td>@Model.NgayDatHang</td>
+                                </tr>
+                                <tr>
+                                    <th>Phương thức thanh toán:</th>
+                                    <td>@Model.</td>
+                                </tr>
+                    
+                            </table>
+                        </div>
 
-<dl class="row">
-    <dt class="col-sm-3">Mã đơn</dt>
-    <dd class="col-sm-9">@Model.MaDonHang</dd>
+                        <!-- Thông tin đơn hàng -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary"><i class="fas fa-info-circle"></i> Thông tin đơn hàng</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th width="40%">Ngày đặt:</th>
+                                    <td>@Model.NgayDatHang.ToString()</td>
+                                </tr>
+                                <tr>
+                                    <th>Trạng thái:</th>
+                                    <td>
+                                        <span class="badge
+                                            @(Model.TrangThai == TrangThaiDonHang.DaGiao ? "bg-success" :
+                                                                                                                                          Model.TrangThai == TrangThaiDonHang.ChoXacNhan ? "bg-info" :
+                                                                                                                                          Model.TrangThai == TrangThaiDonHang.DangGiao ? "bg-warning" :
+                                                                                            "bg-danger")">
+                                            @Model.TrangThai
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Phương thức thanh toán:</th>
+                                    <td>@Model.PhuongThucThanhToan</td>
+                                </tr>
+                                <tr>
+                                    <th>Tổng tiền:</th>
+                                    <td><strong class="text-danger fs-5">@Model.TongTien.ToString("N0") đ</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <dt class="col-sm-3">Ngày đặt</dt>
-    <dd class="col-sm-9">@Model.NgayDatHang.ToString()</dd>
+            <!-- Chi tiết sản phẩm -->
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart"></i> Sản phẩm đã đặt</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="10%">Hình ảnh</th>
+                                    <th width="35%">Tên sách</th>
+                                    <th width="15%" class="text-end">Đơn giá</th>
+                                    <th width="15%" class="text-center">Số lượng</th>
+                                    <th width="15%" class="text-end">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.ChiTietDonHangs != null && Model.ChiTietDonHangs.Any())
+                                {
+                                    foreach (var item in Model.ChiTietDonHangs)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.Sach?.HinhAnh))
+                                                {
+                                                    <img src="@Url.Content(item.Sach.HinhAnh)"
+                                                         alt="@item.Sach.TenSach"
+                                                         class="img-thumbnail"
+                                                         style="max-width: 80px; max-height: 80px;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-light text-center p-2">
+                                                        <i class="fas fa-book fa-2x text-muted"></i>
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                <strong>@item.Sach?.TenSach</strong><br />
+                                                <small class="text-muted">
+                                                    Tác giả: @(item.Sach?.TacGia?.TenTacGia ?? "N/A")
+                                                </small>
+                                            </td>
+                                            <td class="text-end">@item.GiaBan.ToString("N0") đ</td>
+                                            <td class="text-center">
+                                                <span class="badge bg-secondary">x @item.SoLuong</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <strong>@item.ThanhTien.ToString("N0") đ</strong>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                            <p>Không có sản phẩm nào</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="4" class="text-end">Tổng cộng:</th>
+                                    <th class="text-end text-danger fs-5">@Model.TongTien.ToString("N0") đ</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-    <dt class="col-sm-3">Trạng thái</dt>
-    <dd class="col-sm-9">@Model.TrangThai</dd>
+            <!-- Action buttons -->
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="@Url.Action("Index")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                </a>
 
-    <dt class="col-sm-3">Phương thức</dt>
-    <dd class="col-sm-9">@Model.PhuongThucThanhToan</dd>
+                @if (User.IsInRole("Admin"))
+                {
+                    <div>
+                        @if (Model.TrangThai == TrangThaiDonHang.ChoXacNhan)
+                        {
+                            <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                <input type="hidden" name="maDonHang" value="@Model.MaDonHang" />
+                                <input type="hidden" name="trangThai" value="Đang giao" />
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-shipping-fast"></i> Chuyển sang đang giao
+                                </button>
+                            </form>
+                        }
 
-    <dt class="col-sm-3">Tổng tiền</dt>
-    <dd class="col-sm-9">@Model.TongTien.ToString("C")</dd>
-</dl>
+                        @if (Model.TrangThai == TrangThaiDonHang.DangGiao)
+                        {
+                            <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                <input type="hidden" name="maDonHang" value="@Model.MaDonHang" />
+                                <input type="hidden" name="trangThai" value="Đã giao" />
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check-circle"></i> Xác nhận đã giao
+                                </button>
+                            </form>
+                        }
 
-<h4>Chi tiết đơn</h4>
+                        @if (Model.TrangThai != TrangThaiDonHang.DaHuy && Model.TrangThai != TrangThaiDonHang.DaGiao)
+                        {
+                            <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                <input type="hidden" name="maDonHang" value="@Model.MaDonHang" />
+                                <input type="hidden" name="trangThai" value="Đã hủy" />
+                                <button type="submit" class="btn btn-danger"
+                                        onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                    <i class="fas fa-times-circle"></i> Hủy đơn hàng
+                                </button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
 
-@if (Model.ChiTietDonHangs != null && Model.ChiTietDonHangs.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Sách</th>
-                <th>Giá</th>
-                <th>Số lượng</th>
-                <th>Thành tiền</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var c in Model.ChiTietDonHangs)
-            {
-                <tr>
-                    <td>
-                        <a asp-controller="Sach" asp-action="Details" asp-route-id="@c.MaSach">@c.Sach?.TenSach</a>
-                    </td>
-                    <td>@c.GiaBan.ToString("C")</td>
-                    <td>@c.SoLuong</td>
-                    <td>@c.ThanhTien.ToString("C")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+@section Scripts {
+    <script>
+        // Print invoice
+        function printInvoice() {
+            window.print();
+        }
+    </script>
 }
-else
-{
-    <p>Không tìm thấy chi tiết đơn hàng.</p>
-}
 
-<p>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-
-    @if (Model.TrangThai == BTL002.Models.TrangThaiDonHang.ChoXacNhan)
-    {
-        <form asp-action="HuyDonHang" method="post" class="d-inline ms-2">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="maDonHang" value="@Model.MaDonHang" />
-            <button type="submit" class="btn btn-danger">Hủy đơn</button>
-        </form>
+<style>
+    @@media print {
+        .btn, .card-header {
+            display: none !important;
+        }
     }
-</p>
+</style>

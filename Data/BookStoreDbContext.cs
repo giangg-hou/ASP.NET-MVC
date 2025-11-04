@@ -210,23 +210,24 @@ namespace BTL002.Data
 
             // Seed Tác giả
             modelBuilder.Entity<TacGia>().HasData(
-                new TacGia { MaTacGia = 1, TenTacGia = "Nguyễn Nhật Ánh", TieuSu = "Nhà văn nổi tiếng Việt Nam" },
-                new TacGia { MaTacGia = 2, TenTacGia = "Dale Carnegie", TieuSu = "Tác giả người Mỹ về phát triển bản thân" },
-                new TacGia { MaTacGia = 3, TenTacGia = "Robert Kiyosaki", TieuSu = "Doanh nhân và tác giả người Mỹ" },
-                new TacGia { MaTacGia = 4, TenTacGia = "Paulo Coelho", TieuSu = "Nhà văn người Brazil" },
-                new TacGia { MaTacGia = 5, TenTacGia = "Haruki Murakami", TieuSu = "Nhà văn Nhật Bản đương đại" }
+                new TacGia { MaTacGia = 1, TenTacGia = "giang 01", TieuSu = "Nhà văn nổi tiếng Việt Nam" },
+                new TacGia { MaTacGia = 2, TenTacGia = "giang 02", TieuSu = "Tác giả người Mỹ về phát triển bản thân" },
+                new TacGia { MaTacGia = 3, TenTacGia = "giang 03", TieuSu = "Doanh nhân và tác giả người Mỹ" },
+                new TacGia { MaTacGia = 4, TenTacGia = "giang 04", TieuSu = "Nhà văn người Brazil" },
+                new TacGia { MaTacGia = 5, TenTacGia = "giang 05", TieuSu = "Nhà văn Nhật Bản đương đại" }
             );
 
             // Seed Nhà xuất bản
             modelBuilder.Entity<NhaXuatBan>().HasData(
                 new NhaXuatBan { MaNhaXuatBan = 1, TenNhaXuatBan = "NXB Trẻ", DiaChi = "161B Lý Chính Thắng, Q.3, TP.HCM" },
                 new NhaXuatBan { MaNhaXuatBan = 2, TenNhaXuatBan = "NXB Kim Đồng", DiaChi = "55 Quang Trung, Hai Bà Trưng, Hà Nội" },
-                new NhaXuatBan { MaNhaXuatBan = 3, TenNhaXuatBan = "NXB Lao Động", DiaChi = "175 Giảng Võ, Đống Đa, Hà Nội" },
-                new NhaXuatBan { MaNhaXuatBan = 4, TenNhaXuatBan = "NXB Thế Giới", DiaChi = "46 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội" }
+                new NhaXuatBan { MaNhaXuatBan = 3, TenNhaXuatBan = "NXB DH Mở Hà Nội", DiaChi = "96 Định Công, Hoàng Mai, Hà Nội" },
+                new NhaXuatBan { MaNhaXuatBan = 4, TenNhaXuatBan = "NXB Lao Động", DiaChi = "175 Giảng Võ, Đống Đa, Hà Nội" },
+                new NhaXuatBan { MaNhaXuatBan = 5, TenNhaXuatBan = "NXB Thế Giới", DiaChi = "46 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội" }
             );
 
             // Seed User mặc định (Admin) — password hashed to match AccountController's SHA256 Verify
-            var adminHashed = HashSeedPassword("Admin@123");
+            var adminHashed = HashSeedPassword("123123");
             modelBuilder.Entity<NguoiDung>().HasData(
                 new NguoiDung
                 {
@@ -235,7 +236,7 @@ namespace BTL002.Data
                     Email = "admin@bookstore.com",
                     MatKhau = adminHashed,
                     VaiTro = VaiTro.Admin,
-                    NgayDangKy = "2025-11-01",
+                    NgayDangKy = "2025-11-05",
                     DiaChi = "Việt Nam",
                     SoDienThoai = "0000000000"
                 }

@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BTL002.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialFix : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -265,7 +265,7 @@ namespace BTL002.Migrations
             migrationBuilder.InsertData(
                 table: "NguoiDungs",
                 columns: new[] { "ma_nguoi_dung", "dia_chi", "email", "ho_ten", "mat_khau", "ngay_dang_ky", "so_dien_thoai", "vai_tro" },
-                values: new object[] { 1, "Việt Nam", "admin@bookstore.com", "Quản trị viên", "6G94qKPK8LYNjnTllCqm2G3BUM08AzOK7yW30tfjrMc=", "2025-11-01", "0000000000", "Admin" });
+                values: new object[] { 1, "Việt Nam", "admin@bookstore.com", "Quản trị viên", "Admin@123", "2025-11-01", "0000000000", "Admin" });
 
             migrationBuilder.InsertData(
                 table: "NhaXuatBans",
@@ -274,8 +274,9 @@ namespace BTL002.Migrations
                 {
                     { 1, "161B Lý Chính Thắng, Q.3, TP.HCM", "NXB Trẻ" },
                     { 2, "55 Quang Trung, Hai Bà Trưng, Hà Nội", "NXB Kim Đồng" },
-                    { 3, "175 Giảng Võ, Đống Đa, Hà Nội", "NXB Lao Động" },
-                    { 4, "46 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội", "NXB Thế Giới" }
+                    { 3, "96 Định Công, Hoàng Mai, Hà Nội", "NXB DH Mở Hà Nội" },
+                    { 4, "175 Giảng Võ, Đống Đa, Hà Nội", "NXB Lao Động" },
+                    { 5, "46 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội", "NXB Thế Giới" }
                 });
 
             migrationBuilder.InsertData(
@@ -283,11 +284,11 @@ namespace BTL002.Migrations
                 columns: new[] { "ma_tac_gia", "ten_tac_gia", "tieu_su" },
                 values: new object[,]
                 {
-                    { 1, "Nguyễn Nhật Ánh", "Nhà văn nổi tiếng Việt Nam" },
-                    { 2, "Dale Carnegie", "Tác giả người Mỹ về phát triển bản thân" },
-                    { 3, "Robert Kiyosaki", "Doanh nhân và tác giả người Mỹ" },
-                    { 4, "Paulo Coelho", "Nhà văn người Brazil" },
-                    { 5, "Haruki Murakami", "Nhà văn Nhật Bản đương đại" }
+                    { 1, "giang 01", "Nhà văn nổi tiếng Việt Nam" },
+                    { 2, "giang 02", "Tác giả người Mỹ về phát triển bản thân" },
+                    { 3, "giang 03", "Doanh nhân và tác giả người Mỹ" },
+                    { 4, "giang 04", "Nhà văn người Brazil" },
+                    { 5, "giang 05", "Nhà văn Nhật Bản đương đại" }
                 });
 
             migrationBuilder.CreateIndex(

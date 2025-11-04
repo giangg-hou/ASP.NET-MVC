@@ -1,0 +1,74 @@
+﻿@model BTL002.Models.DanhMuc
+@{
+    ViewData["Title"] = "Xóa danh mục";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Xác nhận xóa danh mục</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <strong>Cảnh báo!</strong> Bạn có chắc chắn muốn xóa danh mục này?
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Mã danh mục:</dt>
+                        <dd class="col-sm-8"><strong>#@Model.MaDanhMuc</strong></dd>
+
+                        <dt class="col-sm-4">Tên danh mục:</dt>
+                        <dd class="col-sm-8"><strong class="text-danger">@Model.TenDanhMuc</strong></dd>
+
+                        <dt class="col-sm-4">Mô tả:</dt>
+                        <dd class="col-sm-8">@(Model.MoTa ?? "Không có")</dd>
+
+                        <dt class="col-sm-4">Số sách:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Sachs != null && Model.Sachs.Any())
+                            {
+                                <span class="badge bg-danger">@Model.Sachs.Count sách</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">0 sách</span>
+                            }
+                        </dd>
+                    </dl>
+
+                    @if (Model.Sachs != null && Model.Sachs.Any())
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-times-circle"></i>
+                            <strong>Không thể xóa!</strong> Danh mục này đang có sách sử dụng.
+                        </div>
+                    }
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="MaDanhMuc" />
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Hủy bỏ
+                            </a>
+                            @if (Model.Sachs == null || !Model.Sachs.Any())
+                            {
+                                <button type="submit" class="btn btn-danger"
+                                        onclick="return confirm('Bạn có CHẮC CHẮN muốn xóa?');">
+                                    <i class="fas fa-trash-alt"></i> Xóa danh mục
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-danger" disabled>
+                                    <i class="fas fa-ban"></i> Không thể xóa
+                                </button>
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
