@@ -47,6 +47,11 @@ namespace BTL002.Models
         [Display(Name = "Vai trò")]
         public VaiTro VaiTro { get; set; }
 
+        [Required]
+        [Column("trang_thai")]
+        [Display(Name = "Trạng thái")]
+        public TrangThaiTaiKhoan TrangThai { get; set; }
+
         [Column("ngay_dang_ky")]
         [Display(Name = "Ngày đăng ký")]
         [StringLength(20)]

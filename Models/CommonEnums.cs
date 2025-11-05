@@ -8,6 +8,7 @@ namespace BTL002.Models
     {
         [Display(Name = "Khách hàng")]
         KhachHang,
+        NguoiBan,
         Admin
     }
 
@@ -30,5 +31,27 @@ namespace BTL002.Models
         COD,
         [Display(Name = "Chuyển khoản")]
         ChuyenKhoan
+    }
+
+    public enum GioiTinh
+    {
+        [Display(Name = "Nam")]
+        Nam,
+        [Display(Name = "Nữ")]
+        Nu,
+        [Display(Name = "Khác")]
+        Khac
+    }
+    
+    public enum TrangThaiSach
+    {
+        ConHang,
+        HetHang
+    }
+
+    public enum TrangThaiTaiKhoan { 
+        KichHoat,
+        DangCho,
+        TuChoi
     }
 }

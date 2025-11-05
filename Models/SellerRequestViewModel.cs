@@ -10,6 +10,6 @@ namespace BTL002.Models
         public string Phone { get; set; }
         public string Address { get; set; }
         public string CreatedAt { get; set; }
-        public TrangThaiTro Status { get; set; }
+        public TrangThaiTaiKhoan Status { get; set; }
     }
 }

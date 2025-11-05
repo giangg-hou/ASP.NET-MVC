@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BTL002.Migrations
 {
     [DbContext(typeof(BookStoreDbContext))]
-    [Migration("20251104184231_UpdateModels")]
-    partial class UpdateModels
+    [Migration("20251105095907_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -288,6 +288,10 @@ namespace BTL002.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("so_dien_thoai");
 
+                    b.Property<int>("TrangThai")
+                        .HasColumnType("integer")
+                        .HasColumnName("trang_thai");
+
                     b.Property<string>("VaiTro")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -304,13 +308,14 @@ namespace BTL002.Migrations
                     b.HasData(
                         new
                         {
-                            MaNguoiDung = 2,
+                            MaNguoiDung = 1,
                             DiaChi = "Việt Nam",
                             Email = "admin@bookstore.com",
                             HoTen = "Quản trị viên",
                             MatKhau = "lsrjXOipsCRBeL8o5JZsLOG4OFcjqWprg4hYzdbKCh4=",
                             NgayDangKy = "2025-11-05",
                             SoDienThoai = "0000000000",
+                            TrangThai = 0,
                             VaiTro = "Admin"
                         });
                 });
@@ -429,6 +434,10 @@ namespace BTL002.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("ten_sach");
+
+                    b.Property<bool>("TrangThai")
+                        .HasColumnType("boolean")
+                        .HasColumnName("trang_thai");
 
                     b.HasKey("MaSach");
 

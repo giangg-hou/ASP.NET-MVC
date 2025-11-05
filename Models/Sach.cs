@@ -17,20 +17,20 @@ namespace BTL002.Models
         [Display(Name = "Tên sách")]
         public string TenSach { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Hãy chọn tác giả")]
         [Column("ma_tac_gia")]
         [Display(Name = "Tác giả")]
-        public int MaTacGia { get; set; }
+        public int? MaTacGia { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Hãy chọn nhà xuất bản")]
         [Column("ma_nha_xuat_ban")]
         [Display(Name = "Nhà xuất bản")]
-        public int MaNhaXuatBan { get; set; }
+        public int? MaNhaXuatBan { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Hãy chọn danh mục")]
         [Column("ma_danh_muc")]
         [Display(Name = "Danh mục")]
-        public int MaDanhMuc { get; set; }
+        public int? MaDanhMuc { get; set; }
 
         [Column("mo_ta")]
         [Display(Name = "Mô tả")]
@@ -63,8 +63,11 @@ namespace BTL002.Models
         [StringLength(20)]
         [Column("ngay_tao")]
         [Display(Name = "Ngày tạo")]
-        
         public string NgayTao { get; set; }
+
+        [Column("trang_thai")]
+        [Display(Name = "Trạng thái")]
+        public bool TrangThai { get; set; } = false; // false = Chờ duyệt, true = Đã duyệt
 
         // Navigation properties
         [ForeignKey("MaTacGia")]

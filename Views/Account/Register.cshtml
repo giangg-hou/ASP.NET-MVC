@@ -4,55 +4,82 @@
     ViewData["Title"] = "Đăng ký";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-7 col-lg-6">
-        <h2 class="mb-3">@ViewData["Title"]</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Đăng ký tài khoản</h2>
 
-        <form asp-controller="Account" asp-action="Register" method="post" novalidate>
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+                    <form asp-action="Register" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
 
-            <div class="mb-3">
-                <label asp-for="HoTen" class="form-label"></label>
-                <input asp-for="HoTen" class="form-control" />
-                <span asp-validation-for="HoTen" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="HoTen" class="form-label"></label>
+                            <input asp-for="HoTen" class="form-control" />
+                            <span asp-validation-for="HoTen" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MatKhau" class="form-label"></label>
+                            <input asp-for="MatKhau" class="form-control" />
+                            <span asp-validation-for="MatKhau" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="XacNhanMatKhau" class="form-label"></label>
+                            <input asp-for="XacNhanMatKhau" class="form-control" />
+                            <span asp-validation-for="XacNhanMatKhau" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SoDienThoai" class="form-label"></label>
+                            <input asp-for="SoDienThoai" class="form-control" />
+                            <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DiaChi" class="form-label"></label>
+                            <textarea asp-for="DiaChi" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="DiaChi" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Vai trò</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="Role" value="0" checked id="roleBuyer">
+                                <label class="form-check-label" for="roleBuyer">
+                                    Người mua - Mua sách trên nền tảng
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="Role" value="1" id="roleSeller">
+                                <label class="form-check-label" for="roleSeller">
+                                    Người bán - Bán sách (cần duyệt)
+                                </label>
+                            </div>
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-warning" id="sellerWarning" style="display: none;">
+                            Tài khoản người bán cần được admin phê duyệt trước khi sử dụng.
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a asp-action="Login">Đã có tài khoản? Đăng nhập</a>
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="MatKhau" class="form-label"></label>
-                <input asp-for="MatKhau" type="password" class="form-control" />
-                <span asp-validation-for="MatKhau" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="XacNhanMatKhau" class="form-label"></label>
-                <input asp-for="XacNhanMatKhau" type="password" class="form-control" />
-                <span asp-validation-for="XacNhanMatKhau" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="SoDienThoai" class="form-label"></label>
-                <input asp-for="SoDienThoai" class="form-control" />
-                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="DiaChi" class="form-label"></label>
-                <input asp-for="DiaChi" class="form-control" />
-                <span asp-validation-for="DiaChi" class="text-danger"></span>
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-success">Đăng ký</button>
-                <a asp-action="Login" class="btn btn-outline-secondary">Đã có tài khoản</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 

@@ -23,10 +23,10 @@
     <div class="card-body">
         <form method="get" asp-action="Index">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="text" name="search" class="form-control" placeholder="Tìm kiếm sách..." value="@ViewBag.CurrentFilter">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <select name="danhMuc" class="form-select">
                         <option value="">-- Tất cả danh mục --</option>
                         @foreach (var dm in ViewBag.DanhMucs as SelectList)
@@ -35,7 +35,7 @@
                         }
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <select name="tacGia" class="form-select">
                         <option value="">-- Tất cả tác giả --</option>
                         @foreach (var tg in ViewBag.TacGias as SelectList)
@@ -44,11 +44,29 @@
                         }
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i> Tìm
-                    </button>
-                </div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="col-md-3">
+                        <select name="trangThai" class="form-select">
+                            <option value="">-- Tất cả trạng thái --</option>
+                            <option value="true">Đã duyệt</option>
+                            <option value="false">Chờ duyệt</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Tìm
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Tìm
+                        </button>
+                    </div>
+                }
             </div>
         </form>
     </div>
@@ -59,7 +77,23 @@
     @foreach (var item in Model)
     {
         <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm @(!item.TrangThai && User.IsInRole("Admin") ? "border-warning" : "")">
+                @if (!item.TrangThai && User.IsInRole("Admin"))
+                {
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-warning text-dark">
+                            <i class="fas fa-clock"></i> Chờ duyệt
+                        </span>
+                    </div>
+                }
+                @if (item.TrangThai)
+                {
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-success">
+                            <i class="fas fa-check-circle"></i> Đã duyệt
+                        </span>
+                    </div>
+                }
                 <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/no-image.jpg" : item.HinhAnh)"
                      class="card-img-top" alt="@item.TenSach" style="height: 250px; object-fit: cover;">
                 <div class="card-body d-flex flex-column">
@@ -79,7 +113,7 @@
                         <a asp-action="Details" asp-route-id="@item.MaSach" class="btn btn-primary btn-sm w-100 mb-2">
                             <i class="fas fa-info-circle"></i> Chi tiết
                         </a>
-                        @if (User.Identity?.IsAuthenticated == true)
+                        @if (User.Identity?.IsAuthenticated == true && item.TrangThai)
                         {
                             <form asp-controller="GioHang" asp-action="ThemVaoGio" method="post" class="d-inline w-100">
                                 <input type="hidden" name="maSach" value="@item.MaSach" />
@@ -92,12 +126,32 @@
                     @if (User.IsInRole("Admin"))
                     {
                         <div class="mt-2">
-                            <a asp-action="Edit" asp-route-id="@item.MaSach" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Sửa
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.MaSach" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> Xóa
-                            </a>
+                            <div class="btn-group w-100 mb-2" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.MaSach" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.MaSach" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
+                            </div>
+                            @if (!item.TrangThai)
+                            {
+                                <form asp-action="DuyetSach" asp-route-id="@item.MaSach" method="post" class="w-100">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-success btn-sm w-100">
+                                        <i class="fas fa-check"></i> Duyệt sách
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="HuyDuyetSach" asp-route-id="@item.MaSach" method="post" class="w-100">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-secondary btn-sm w-100">
+                                        <i class="fas fa-times"></i> Hủy duyệt
+                                    </button>
+                                </form>
+                            }
                         </div>
                     }
                 </div>

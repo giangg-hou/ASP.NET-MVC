@@ -39,6 +39,7 @@ namespace BTL002.Migrations
                     so_dien_thoai = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     dia_chi = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     vai_tro = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    trang_thai = table.Column<int>(type: "integer", nullable: false),
                     ngay_dang_ky = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
@@ -112,7 +113,8 @@ namespace BTL002.Migrations
                     so_luong_ton = table.Column<int>(type: "integer", nullable: false),
                     hinh_anh = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     nam_xuat_ban = table.Column<int>(type: "integer", nullable: false),
-                    ngay_tao = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
+                    ngay_tao = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    trang_thai = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -264,8 +266,8 @@ namespace BTL002.Migrations
 
             migrationBuilder.InsertData(
                 table: "NguoiDungs",
-                columns: new[] { "ma_nguoi_dung", "dia_chi", "email", "ho_ten", "mat_khau", "ngay_dang_ky", "so_dien_thoai", "vai_tro" },
-                values: new object[] { 1, "Việt Nam", "admin@bookstore.com", "Quản trị viên", "Admin@123", "2025-11-01", "0000000000", "Admin" });
+                columns: new[] { "ma_nguoi_dung", "dia_chi", "email", "ho_ten", "mat_khau", "ngay_dang_ky", "so_dien_thoai", "trang_thai", "vai_tro" },
+                values: new object[] { 1, "Việt Nam", "admin@bookstore.com", "Quản trị viên", "lsrjXOipsCRBeL8o5JZsLOG4OFcjqWprg4hYzdbKCh4=", "2025-11-05", "0000000000", 0, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "NhaXuatBans",

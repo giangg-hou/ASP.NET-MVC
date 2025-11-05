@@ -33,6 +33,10 @@ namespace BTL002.Models.ViewModels
 
         [Display(Name = "Địa chỉ")]
         public string DiaChi { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng chọn vai trò")]
+        [Display(Name = "Vai trò")]
+        public VaiTro Role { get; set; }
     }
 
     public class LoginViewModel

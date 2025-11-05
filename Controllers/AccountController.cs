@@ -21,117 +21,145 @@ namespace BTL002.Controllers
             _db = db;
         }
 
-        // GET: Account/Register
+        // GET: Register
         [HttpGet]
         public IActionResult Register()
         {
             if (User.Identity?.IsAuthenticated == true)
-            {
                 return RedirectToAction("Index", "Home");
-            }
+
             return View();
         }
 
-        // POST: Account/Register
+        // POST: Register
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (_db.NguoiDungs.Any(u => u.Email == model.Email))
             {
-                // Kiểm tra email đã tồn tại chưa
-                if (_db.NguoiDungs.Any(u => u.Email == model.Email))
-                {
-                    ModelState.AddModelError("Email", "Email này đã được sử dụng");
-                    return View(model);
-                }
-
-                // Tạo user mới
-                var user = new NguoiDung
-                {
-                    HoTen = model.HoTen,
-                    Email = model.Email,
-                    MatKhau = HashPassword(model.MatKhau),
-                    SoDienThoai = model.SoDienThoai,
-                    DiaChi = model.DiaChi,
-                    VaiTro = VaiTro.KhachHang,
-                    NgayDangKy = DateTime.Now.ToString("yyyy-MM-dd")
-                };
-
-                _db.NguoiDungs.Add(user);
-                await _db.SaveChangesAsync();
-
-                TempData["Success"] = "Đăng ký thành công! Vui lòng đăng nhập.";
-                return RedirectToAction(nameof(Login));
+                ModelState.AddModelError("Email", "Email này đã được sử dụng");
+                return View(model);
             }
 
-            return View(model);
+            if (model.Role == VaiTro.Admin)
+            {
+                ModelState.AddModelError("Role", "Không thể đăng ký tài khoản Admin.");
+                return View(model);
+            }
+
+            // Seller thì chuyển sang trạng thái Pending
+            var status = model.Role switch
+            {
+                VaiTro.KhachHang => TrangThaiTaiKhoan.KichHoat,  // buyer -> active immediately
+                VaiTro.NguoiBan => TrangThaiTaiKhoan.DangCho,    // seller -> pending
+                _ => TrangThaiTaiKhoan.KichHoat
+            };
+
+            var user = new NguoiDung
+            {
+                HoTen = model.HoTen,
+                Email = model.Email,
+                MatKhau = HashPassword(model.MatKhau),
+                SoDienThoai = model.SoDienThoai,
+                DiaChi = model.DiaChi,
+                VaiTro = model.Role,
+                TrangThai = status,
+                NgayDangKy = DateTime.Now.ToString("yyyy-MM-dd")
+            };
+
+            _db.NguoiDungs.Add(user);
+            await _db.SaveChangesAsync();
+
+            if (model.Role == VaiTro.NguoiBan)
+            {
+                TempData["Success"] = "Đăng ký thành công! Vui lòng chờ admin duyệt tài khoản người bán.";
+            }
+            else
+            {
+                TempData["Success"] = "Đăng ký thành công! Vui lòng đăng nhập.";
+            }
+            return RedirectToAction(nameof(Login));
         }
 
-        // GET: Account/Login
+        // GET: Login
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
             if (User.Identity?.IsAuthenticated == true)
-            {
                 return RedirectToAction("Index", "Home");
-            }
 
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
-        // POST: Account/Login
+        // POST: Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = _db.NguoiDungs.FirstOrDefault(u => u.Email == model.Email);
+
+            if (user == null || !VerifyPassword(model.MatKhau, user.MatKhau))
             {
-                var user = _db.NguoiDungs.FirstOrDefault(u => u.Email == model.Email);
-
-                if (user != null && VerifyPassword(model.MatKhau, user.MatKhau))
-                {
-                    // Tạo claims
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.MaNguoiDung.ToString()),
-                        new Claim(ClaimTypes.Name, user.HoTen),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Role, user.VaiTro.ToString())
-                    };
-
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = model.RememberMe,
-                        ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddHours(2)
-                    };
-
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-
-                    TempData["Success"] = $"Chào mừng {user.HoTen}!";
-
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    {
-                        return Redirect(returnUrl);
-                    }
-
-                    return RedirectToAction("Index", "Home");
-                }
-
                 ModelState.AddModelError("", "Email hoặc mật khẩu không đúng");
+                return View(model);
             }
 
-            return View(model);
+            // Kiểm tra trạng thái tài khoản như Identity
+            if (user.TrangThai != TrangThaiTaiKhoan.KichHoat)
+            {
+                ModelState.AddModelError("", "Tài khoản của bạn chưa được duyệt hoặc đã bị từ chối.");
+                return View(model);
+            }
+
+            // Tạo Claims
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.MaNguoiDung.ToString()),
+                new Claim(ClaimTypes.Name, user.HoTen),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.VaiTro.ToString())
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = model.RememberMe,
+                ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddHours(2)
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(identity),
+                authProperties);
+
+            TempData["Success"] = $"Chào mừng {user.HoTen}!";
+
+            // Redirect theo Role giống Identity
+            switch (user.VaiTro)
+            {
+                case VaiTro.Admin:
+                    return RedirectToAction("Index", "Admin");
+
+                case VaiTro.NguoiBan:
+                    return RedirectToAction("Index", "Home");
+
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
         }
 
-        // POST: Account/Logout
+        // POST: Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -141,18 +169,15 @@ namespace BTL002.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: Account/Profile
+        // GET: Profile
         [Authorize]
-        [HttpGet]
         public IActionResult Profile()
         {
-            var userId = GetCurrentUserId();
-            var user = _db.NguoiDungs.Find(userId);
+            var id = GetUserId();
+            var user = _db.NguoiDungs.Find(id);
 
             if (user == null)
-            {
                 return NotFound();
-            }
 
             var model = new ProfileViewModel
             {
@@ -165,103 +190,85 @@ namespace BTL002.Controllers
             return View(model);
         }
 
-        // POST: Account/Profile
+        // POST: Profile
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var userId = GetCurrentUserId();
-                var user = _db.NguoiDungs.Find(userId);
+            if (!ModelState.IsValid)
+                return View(model);
 
-                if (user == null)
-                {
-                    return NotFound();
-                }
+            var id = GetUserId();
+            var user = _db.NguoiDungs.Find(id);
 
-                user.HoTen = model.HoTen;
-                user.SoDienThoai = model.SoDienThoai;
-                user.DiaChi = model.DiaChi;
+            if (user == null)
+                return NotFound();
 
-                await _db.SaveChangesAsync();
+            user.HoTen = model.HoTen;
+            user.SoDienThoai = model.SoDienThoai;
+            user.DiaChi = model.DiaChi;
 
-                TempData["Success"] = "Cập nhật thông tin thành công";
-                return RedirectToAction(nameof(Profile));
-            }
+            await _db.SaveChangesAsync();
 
-            return View(model);
+            TempData["Success"] = "Cập nhật thông tin thành công";
+            return RedirectToAction(nameof(Profile));
         }
 
-        // GET: Account/ChangePassword
+        // GET: ChangePassword
         [Authorize]
-        [HttpGet]
         public IActionResult ChangePassword()
         {
             return View();
         }
 
-        // POST: Account/ChangePassword
+        // POST: ChangePassword
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var id = GetUserId();
+            var user = _db.NguoiDungs.Find(id);
+
+            if (user == null)
+                return NotFound();
+
+            if (!VerifyPassword(model.MatKhauCu, user.MatKhau))
             {
-                var userId = GetCurrentUserId();
-                var user = _db.NguoiDungs.Find(userId);
-
-                if (user == null)
-                {
-                    return NotFound();
-                }
-
-                // Kiểm tra mật khẩu cũ
-                if (!VerifyPassword(model.MatKhauCu, user.MatKhau))
-                {
-                    ModelState.AddModelError("MatKhauCu", "Mật khẩu cũ không đúng");
-                    return View(model);
-                }
-
-                // Cập nhật mật khẩu mới
-                user.MatKhau = HashPassword(model.MatKhauMoi);
-                await _db.SaveChangesAsync();
-
-                TempData["Success"] = "Đổi mật khẩu thành công";
-                return RedirectToAction(nameof(Profile));
+                ModelState.AddModelError("MatKhauCu", "Mật khẩu cũ không đúng");
+                return View(model);
             }
 
-            return View(model);
+            user.MatKhau = HashPassword(model.MatKhauMoi);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "Đổi mật khẩu thành công";
+            return RedirectToAction(nameof(Profile));
         }
 
-        // GET: Account/AccessDenied
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
+        public IActionResult AccessDenied() => View();
 
-        // Helper Methods
-        private int GetCurrentUserId()
+        // Helpers
+        private int GetUserId()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return int.TryParse(userIdClaim, out int userId) ? userId : 0;
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(id, out var uid) ? uid : 0;
         }
 
         private string HashPassword(string password)
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
+            using var sha = SHA256.Create();
+            var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(bytes);
         }
 
-        private bool VerifyPassword(string enteredPassword, string storedHash)
+        private bool VerifyPassword(string input, string hash)
         {
-            var enteredHash = HashPassword(enteredPassword);
-            return enteredHash == storedHash;
+            return HashPassword(input) == hash;
         }
     }
 }
