@@ -1,0 +1,262 @@
+﻿@model IEnumerable<BTL002.Models.NguoiDung>
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-users"></i> Quản lý người dùng</h4>
+                <a asp-action="Create" class="btn btn-light">
+                    <i class="fas fa-plus"></i> Thêm người dùng
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control"
+                               placeholder="Tìm kiếm người dùng...">
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <span class="badge bg-info fs-6">Tổng: @Model.Count() người dùng</span>
+                </div>
+            </div>
+
+            <!-- Danh sách người dùng -->
+            <div class="row" id="userList">
+                @if (Model.Any())
+                {
+                    foreach (var user in Model)
+                    {
+                        <div class="col-12 col-md-6 col-lg-4 mb-4 user-card">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="flex-shrink-0 me-3">
+                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                                 style="width: 60px; height: 60px; font-size: 24px; font-weight: bold;">
+                                                @(string.IsNullOrEmpty(user.HoTen) ? "?" : user.HoTen.Substring(0, 1).ToUpper())
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="card-title mb-1">@user.HoTen</h5>
+                                            <span class="badge @(user.VaiTro == BTL002.Models.VaiTro.Admin ? "bg-danger" :
+                                                                                                                   user.VaiTro == BTL002.Models.VaiTro.KhachHang ? "bg-warning" : "bg-info")">
+                                        @user.VaiTro
+                                    </span>
+                                </div>
+                            </div>
+
+                                    <div class="mb-3">
+                                @if (user.IsVerified)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle"></i> Đã xác thực
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-clock"></i> Chưa xác thực
+                                            </span>
+                                        }
+
+                                        <span class="badge @(user.TrangThai == BTL002.Models.TrangThaiTaiKhoan.KichHoat ? "bg-success" : "bg-danger")">
+                                            @user.TrangThai
+                                        </span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="card-text mb-1 small">
+                                            <i class="fas fa-envelope text-primary"></i>
+                                            <span class="ms-2">@user.Email</span>
+                                        </p>
+                                        @if (!string.IsNullOrEmpty(user.SoDienThoai))
+                                        {
+                                            <p class="card-text mb-1 small">
+                                                <i class="fas fa-phone text-success"></i>
+                                                <span class="ms-2">@user.SoDienThoai</span>
+                                            </p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(user.DiaChi))
+                                        {
+                                            <p class="card-text mb-1 small text-muted">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <span class="ms-2">@(user.DiaChi.Length > 40 ? user.DiaChi.Substring(0, 40) + "..." : user.DiaChi)</span>
+                                            </p>
+                                        }
+                                        <p class="card-text mb-0 small text-muted">
+                                            <i class="fas fa-calendar"></i>
+                                            <span class="ms-2">Tham gia: @user.NgayDangKy.ToString()</span>
+                                        </p>
+                                    </div>
+
+                                    <div class="border-top pt-3">
+                                        <div class="row text-center small">
+                                            <div class="col-4">
+                                                <div class="text-muted">Đơn hàng</div>
+                                                <strong>@(user.DonHangs?.Count ?? 0)</strong>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="text-muted">Đánh giá</div>
+                                                <strong>@(user.DanhGias?.Count ?? 0)</strong>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="text-muted">Yêu thích</div>
+                                                <strong>@(user.YeuThichs?.Count ?? 0)</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex gap-2 mt-3">
+                                        <a asp-action="Details" asp-route-id="@user.MaNguoiDung"
+                                           class="btn btn-sm btn-outline-primary flex-fill">
+                                            <i class="fas fa-eye"></i> Chi tiết
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@user.MaNguoiDung"
+                                           class="btn btn-sm btn-outline-warning flex-fill">
+                                            <i class="fas fa-edit"></i> Sửa
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@user.MaNguoiDung"
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Bạn có chắc muốn xóa người dùng này?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <div class="alert alert-info text-center py-5">
+                            <i class="fas fa-users fa-3x mb-3"></i>
+                            <p class="mb-0">Chưa có người dùng nào trong hệ thống</p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                <nav>
+                    <ul class="pagination" id="pagination"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // ==== Tìm kiếm có debounce ====
+        let debounceTimer;
+        const searchInput = document.getElementById('searchInput');
+        const userCards = document.querySelectorAll('.user-card');
+
+        searchInput.addEventListener('keyup', function () {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const value = this.value.toLowerCase();
+                userCards.forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    card.style.display = text.includes(value) ? '' : 'none';
+                });
+                currentPage = 1; // reset về trang 1 khi tìm kiếm
+                renderPagination();
+            }, 200);
+        });
+
+        // ==== Phân trang client-side ====
+        const itemsPerPage = 6;
+        let currentPage = 1;
+
+        function renderPagination() {
+            const visibleCards = Array.from(userCards).filter(c => c.style.display !== 'none');
+            const totalPages = Math.ceil(visibleCards.length / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            if (totalPages <= 1) {
+                visibleCards.forEach(c => c.style.display = '');
+                return;
+            }
+
+            // Ẩn tất cả card trước
+            visibleCards.forEach(c => c.style.display = 'none');
+
+            // Hiển thị các card của trang hiện tại
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            visibleCards.slice(start, end).forEach(c => c.style.display = '');
+
+            // Render pagination links
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                li.addEventListener('click', e => {
+                    e.preventDefault();
+                    currentPage = i;
+                    renderPagination();
+                });
+                pagination.appendChild(li);
+            }
+        }
+
+        // Khởi tạo pagination khi load trang
+        renderPagination();
+    </script>
+}
+
+<style>
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid #dee2e6;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+
+    @@media (max-width: 767px) {
+        .card-body
+
+    {
+        padding: 1rem;
+    }
+
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    }
+
+    @@media (min-width: 768px) and (max-width: 991px) {
+        .container-fluid {
+            padding: 0 2rem;
+        }
+    }
+</style>

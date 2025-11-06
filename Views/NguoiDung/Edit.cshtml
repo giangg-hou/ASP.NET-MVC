@@ -1,0 +1,69 @@
+﻿@model BTL002.Models.NguoiDungEditVM
+
+@{
+    ViewData["Title"] = "Sửa thông tin người dùng";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4>Sửa thông tin - @Model.HoTen</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="MaNguoiDung" />
+
+                <div asp-validation-summary="All" class="text-danger mb-2"></div>
+
+                <div class="mb-3">
+                    <label asp-for="HoTen" class="form-label"></label>
+                    <input asp-for="HoTen" class="form-control" />
+                    <span asp-validation-for="HoTen" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SoDienThoai" class="form-label"></label>
+                    <input asp-for="SoDienThoai" class="form-control" />
+                    <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DiaChi" class="form-label"></label>
+                    <input asp-for="DiaChi" class="form-control" />
+                    <span asp-validation-for="DiaChi" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="VaiTro" class="form-label"></label>
+                    <select asp-for="VaiTro" class="form-select" asp-items="ViewBag.VaiTroList"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TrangThai" class="form-label"></label>
+                    <select asp-for="TrangThai" class="form-select" asp-items="ViewBag.TrangThaiList"></select>
+                </div>
+
+                <div class="text-end">
+                    <button class="btn btn-primary" type="submit">Lưu</button>
+                    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

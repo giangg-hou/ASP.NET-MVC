@@ -2,6 +2,7 @@
 using BTL002.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BTL002.Migrations
 {
     [DbContext(typeof(BookStoreDbContext))]
-    partial class BookStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251105202318_AddVerifyKeyToUsers")]
+    partial class AddVerifyKeyToUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -267,9 +270,6 @@ namespace BTL002.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("ho_ten");
 
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("MatKhau")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -298,10 +298,6 @@ namespace BTL002.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("vai_tro");
 
-                    b.Property<string>("VerifyKey")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
                     b.HasKey("MaNguoiDung");
 
                     b.HasIndex("Email")
@@ -316,7 +312,6 @@ namespace BTL002.Migrations
                             DiaChi = "Việt Nam",
                             Email = "admin@bookstore.com",
                             HoTen = "Quản trị viên",
-                            IsVerified = false,
                             MatKhau = "lsrjXOipsCRBeL8o5JZsLOG4OFcjqWprg4hYzdbKCh4=",
                             NgayDangKy = "2025-11-05",
                             SoDienThoai = "0000000000",

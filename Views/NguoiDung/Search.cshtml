@@ -1,0 +1,448 @@
+﻿@model IEnumerable<BTL002.Models.NguoiDung>
+
+@{
+    ViewData["Title"] = "Tìm kiếm người dùng";
+    var searchPerformed = ViewData["SearchPerformed"] as bool? ?? false;
+    var resultCount = ViewData["ResultCount"] as int? ?? 0;
+    var p1Value = ViewData["P1"] as string ?? "";
+    var p2Value = ViewData["P2"] as string ?? "";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+            .page-header h2 {
+                margin: 0;
+                font-weight: 600;
+            }
+
+        .search-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+            .search-card .card-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 10px 10px 0 0;
+                padding: 15px 20px;
+            }
+
+            .search-card .card-body {
+                padding: 30px;
+            }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            transition: all 0.3s;
+        }
+
+            .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            }
+
+            .form-control.is-invalid {
+                border-color: #dc3545;
+            }
+
+        .btn-search {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+            .btn-search:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+                color: white;
+            }
+
+        .btn-back {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+            .btn-back:hover {
+                background: #5a6268;
+                color: white;
+            }
+
+        .results-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+            .results-card .card-header {
+                background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                color: white;
+                border-radius: 10px 10px 0 0;
+                padding: 15px 20px;
+            }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+            .table thead th {
+                background-color: #343a40;
+                color: white;
+                font-weight: 600;
+                border: none;
+                padding: 15px;
+                white-space: nowrap;
+            }
+
+            .table tbody td {
+                padding: 12px 15px;
+                vertical-align: middle;
+            }
+
+            .table tbody tr:hover {
+                background-color: #f8f9fa;
+            }
+
+        .badge {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-role-admin {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .badge-role-user {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .badge-status-active {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .badge-status-inactive {
+            background: #6c757d;
+        }
+
+        .badge-verified {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .badge-unverified {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-group .btn {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+            .btn-info:hover {
+                background-color: #138496;
+                border-color: #138496;
+            }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #212529;
+        }
+
+            .btn-warning:hover {
+                background-color: #e0a800;
+                border-color: #e0a800;
+            }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        .alert-custom {
+            border-radius: 8px;
+            border: none;
+            padding: 15px 20px;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .invalid-feedback {
+            font-size: 0.875rem;
+            color: #dc3545;
+            margin-top: 5px;
+        }
+
+        .result-count {
+            background: white;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2>
+                <i class="bi bi-search"></i> Tìm kiếm người dùng
+            </h2>
+            <p class="mb-0 mt-2">Tìm kiếm người dùng theo email và họ tên</p>
+        </div>
+
+        <!-- Success Message -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-custom alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Search Form -->
+        <div class="search-card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-funnel-fill"></i> Bộ lọc tìm kiếm
+                </h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Search" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="p1" class="form-label">
+                                    <i class="bi bi-envelope"></i> Email (p1)
+                                    <span class="text-muted">(Tùy chọn)</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="p1"
+                                       name="p1"
+                                       value="@p1Value"
+                                       placeholder="Nhập email để tìm kiếm...">
+                                <small class="form-text">
+                                    Tìm kiếm theo địa chỉ email của người dùng
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="p2" class="form-label">
+                                    <i class="bi bi-person"></i> Họ tên (p2)
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control @(ViewData.ModelState.ContainsKey("p2") && ViewData.ModelState["p2"].Errors.Count > 0 ? "is-invalid" : "")"
+                                       id="p2"
+                                       name="p2"
+                                       value="@p2Value"
+                                       placeholder="Nhập họ tên (ít nhất 3 ký tự, không có số)..."
+                                       required>
+                                @if (ViewData.ModelState.ContainsKey("p2"))
+                                {
+                                    foreach (var error in ViewData.ModelState["p2"].Errors)
+                                    {
+                                        <div class="invalid-feedback d-block">
+                                            <i class="bi bi-exclamation-circle"></i> @error.ErrorMessage
+                                        </div>
+                                    }
+                                }
+                                <small class="form-text">
+                                    <i class="bi bi-info-circle"></i> Phải có ít nhất 3 ký tự và không chứa chữ số
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-search">
+                                <i class="bi bi-search"></i> Tìm kiếm
+                            </button>
+                            <a asp-action="Index" class="btn btn-back ms-2">
+                                <i class="bi bi-arrow-left"></i> Quay lại danh sách
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        @if (searchPerformed)
+        {
+            <div class="results-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-card-list"></i> Kết quả tìm kiếm
+                        <span class="result-count">@resultCount người dùng</span>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th><i class="bi bi-hash"></i> Mã</th>
+                                        <th><i class="bi bi-person"></i> Họ tên</th>
+                                        <th><i class="bi bi-envelope"></i> Email</th>
+                                        <th><i class="bi bi-telephone"></i> Số điện thoại</th>
+                                        <th><i class="bi bi-shield"></i> Vai trò</th>
+                                        <th><i class="bi bi-toggle-on"></i> Trạng thái</th>
+                                        <th><i class="bi bi-calendar"></i> Ngày đăng ký</th>
+                                        <th><i class="bi bi-patch-check"></i> Xác thực</th>
+                                        <th><i class="bi bi-gear"></i> Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td><strong>@item.MaNguoiDung</strong></td>
+                                            <td>
+                                                <strong>@item.HoTen</strong>
+                                            </td>
+                                            <td>@item.Email</td>
+                                            <td>@(item.SoDienThoai ?? "N/A")</td>
+                                            <td>
+                                                <span class="badge @(item.VaiTro.ToString() == "Admin" ? "badge-role-admin" : "badge-role-user")">
+                                                    @item.VaiTro
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(item.TrangThai.ToString() == "KichHoat" ? "badge-status-active" : "badge-status-inactive")">
+                                                    @item.TrangThai
+                                                </span>
+                                            </td>
+                                            <td>@item.NgayDangKy</td>
+                                            <td>
+                                                @if (item.IsVerified)
+                                                {
+                                                    <span class="badge badge-verified">
+                                                        <i class="bi bi-check-circle-fill"></i> Đã xác thực
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-unverified">
+                                                        <i class="bi bi-x-circle-fill"></i> Chưa xác thực
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@item.MaNguoiDung"
+                                                       class="btn btn-sm btn-info"
+                                                       title="Chi tiết">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@item.MaNguoiDung"
+                                                       class="btn btn-sm btn-warning"
+                                                       title="Chỉnh sửa">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@item.MaNguoiDung"
+                                                       class="btn btn-sm btn-danger"
+                                                       title="Xóa">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-4">
+                            <div class="alert alert-warning alert-custom" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <strong>Không tìm thấy kết quả!</strong><br>
+                                Không có người dùng nào phù hợp với điều kiện tìm kiếm của bạn.
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

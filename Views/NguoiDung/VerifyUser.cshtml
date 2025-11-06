@@ -1,0 +1,29 @@
+﻿@model BTL002.Models.NguoiDung
+
+@{
+    ViewData["Title"] = "Xác thực tài khoản";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4>Xác thực người dùng</h4>
+        </div>
+
+        <div class="card-body">
+            <p>Bạn có chắc muốn xác thực tài khoản của người dùng sau?</p>
+
+            <ul>
+                <li><strong>Họ tên:</strong> @Model.HoTen</li>
+                <li><strong>Email:</strong> @Model.Email</li>
+                <li><strong>Vai trò:</strong> @Model.VaiTro</li>
+            </ul>
+
+            <form asp-action="VerifyUser" method="post">
+                <input type="hidden" asp-for="MaNguoiDung" />
+                <button type="submit" class="btn btn-success">Xác thực</button>
+                <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div>

@@ -47,6 +47,11 @@ namespace BTL002.Models
         [Display(Name = "Vai trò")]
         public VaiTro VaiTro { get; set; }
 
+        // Thêm trường VerifyKey
+        [StringLength(10)]
+        public string? VerifyKey { get; set; }
+        public bool IsVerified { get; set; } = false;
+
         [Required]
         [Column("trang_thai")]
         [Display(Name = "Trạng thái")]

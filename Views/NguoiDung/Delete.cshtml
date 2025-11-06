@@ -1,0 +1,29 @@
+﻿@model BTL002.Models.NguoiDung
+
+@{
+    ViewData["Title"] = "Xóa người dùng";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h4>Xác nhận xóa</h4>
+        </div>
+        <div class="card-body">
+            <p>Bạn có chắc chắn muốn xóa người dùng sau?</p>
+
+            <ul>
+                <li><strong>Họ tên:</strong> @Model.HoTen</li>
+                <li><strong>Email:</strong> @Model.Email</li>
+                <li><strong>Vai trò:</strong> @Model.VaiTro</li>
+                <li><strong>Trạng thái:</strong> @Model.TrangThai</li>
+            </ul>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="MaNguoiDung" />
+                <button type="submit" class="btn btn-danger">Xóa</button>
+                <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div>

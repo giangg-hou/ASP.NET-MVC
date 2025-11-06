@@ -68,6 +68,7 @@ namespace BTL002.Controllers
                 DiaChi = model.DiaChi,
                 VaiTro = model.Role,
                 TrangThai = status,
+                VerifyKey = GenerateVerifyKey(),
                 NgayDangKy = DateTime.Now.ToString("yyyy-MM-dd")
             };
 
@@ -269,6 +270,21 @@ namespace BTL002.Controllers
         private bool VerifyPassword(string input, string hash)
         {
             return HashPassword(input) == hash;
+        }
+
+        /// Tạo mã VerifyKey ngẫu nhiên gồm 10 ký tự (chữ hoa + số)
+        private string GenerateVerifyKey()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            var verifyKey = new char[10];
+
+            for (int i = 0; i < 10; i++)
+            {
+                verifyKey[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new string(verifyKey);
         }
     }
 }

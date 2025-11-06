@@ -12,6 +12,7 @@
             @if (User.IsInRole("Admin"))
             {
                 <li><a class="dropdown-item" asp-controller="Admin" asp-action="">Duyệt yêu cầu đăng ký bán hàng</a></li>
+                <li><a class="dropdown-item" asp-controller="NguoiDung" asp-action="">Quản lý người dùng</a></li>
                 <li><a class="dropdown-item" asp-controller="DonHang" asp-action="QuanLy">Quản lý đơn hàng</a></li>
                 <li><a class="dropdown-item" asp-controller="DanhMuc" asp-action="Index">Quản lý danh mục</a></li>
                 <li><hr class="dropdown-divider"></li>
